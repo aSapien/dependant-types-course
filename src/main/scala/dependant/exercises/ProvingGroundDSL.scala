@@ -134,4 +134,61 @@ object ProvingGroundDSL {
       g !: A ~>: F ~>: (F(A) ->: (A ->: Bool) ->: F(A) )
     }
   }
+
+  object Step6 {
+    object Example {
+      // Boolean type
+      // Declaration
+      val Bool = "Boolean" :: Type
+      // Types of constructors in the form ("how to print constructor" ::: Type_of_constructor)
+      val BoolInd = ("true" ::: Bool) |: ("false" ::: Bool) =: Bool
+      // HList of all constructors for this inductive type
+      val tru :: fls :: HNil = BoolInd.intros
+
+      /**
+        * More examples:
+        *
+        * -- Type of natural numbers
+        * val Nat = "Nat" :: Type
+        * val NatInd = ("0" ::: Nat) |: ("succ" ::: Nat -->>: Nat) =: Nat
+        * val zero :: succ :: HNil = NatInd.intros
+        *
+        * -- Type of integers
+        * val Int = "Integer" :: Type
+        * val IntInd = ("pos" ::: Nat ->>: Int) |: ("neg" ::: Nat ->>: Int) =: Int
+        * val pos :: neg :: HNil = IntInd.intros
+        *
+        * -- List type (type of elements A is fixed)
+        * val ListA = "List(A)" :: Type
+        * val ListAInd = ("nil" ::: ListA) |: ("cons" ::: A ->>: ListA -->>: ListA) =: ListA
+        * val nil :: cons :: HNil = ListAInd.intros
+        *
+        * -- Type of binary trees (option 1)
+        * val BTree = "BTree" :: Type
+        * val BTreeInd = ("leaf" ::: BTree) |: ("fork" ::: BTree -->>: BTree -->>: BTree) =: BTree
+        * val leaf :: fork :: HNil = BTreeInd.intros
+        *
+        * -- Type of binary trees (option 2)
+        * val BTree = "BTree" :: Type
+        * val BTreeInd = ("leaf" ::: BTree) |: ("fork" ::: (Bool -|>: BTree) -->>: BTree) =: BTree
+        * val leaf :: fork :: HNil = BTreeInd.intros
+        */
+
+    }
+
+    // Translate the following algebraic data type from plain Scala into ProvingGround DSL
+    object Exercise {
+      sealed trait Expression
+      case class Number(n: Int) extends Expression
+      case class Negate(e: Expression) extends Expression
+      case class Add(e1: Expression, e2: Expression) extends Expression
+      case class Mult(e1: Expression, e2: Expression) extends Expression
+
+      val Expr = "Expression" :: Type
+      // solution: start
+      val ExprInd = ???
+      // solution: end
+      val number :: negate :: add :: mult :: HNil = ExprInd.intros
+    }
+  }
 }
