@@ -1,8 +1,8 @@
-import dependant.booleantype.BooleanType
+package dependant.exercises
 
 object Main {
 
   def main(args: Array[String]): Unit = {
-    BooleanType.Step9
+    ProvingGroundDSL.Step5.Exercise
   }
 }
