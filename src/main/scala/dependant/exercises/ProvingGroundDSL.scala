@@ -184,10 +184,26 @@ object ProvingGroundDSL {
       case class Add(e1: Expression, e2: Expression) extends Expression
       case class Mult(e1: Expression, e2: Expression) extends Expression
 
+      // provided in scope: start
+      val Nat = "Nat" :: Type
+      val NatInd = ("0" ::: Nat) |: ("succ" ::: Nat -->>: Nat) =: Nat
+      val zero :: succ :: HNil = NatInd.intros
+
+      val Int = "Integer" :: Type
+      val IntInd = ("pos" ::: Nat ->>: Int) |: ("neg" ::: Nat ->>: Int) =: Int
+      val pos :: neg :: HNil = IntInd.intros
+
       val Expr = "Expression" :: Type
+      // provided in scope: end
+
       // solution: start
-      val ExprInd = ???
+      val ExprInd =
+        ("Number" ::: Int ->>: Expr) |:
+        ("Negate" ::: Expr -->>: Expr) |:
+        ("Add" ::: (Expr -->>: Expr -->>: Expr)) |:
+        ("Mult" ::: (Expr -->>: Expr -->>: Expr)) =: Expr
       // solution: end
+
       val number :: negate :: add :: mult :: HNil = ExprInd.intros
     }
   }
