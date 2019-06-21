@@ -207,4 +207,93 @@ object ProvingGroundDSL {
       val number :: negate :: add :: mult :: HNil = ExprInd.intros
     }
   }
+
+  object Step7 {
+    /**
+      * If we define dependent inductive type then we should use =:: instead of =:
+      * and (Type_name -> Type_name(n)) in output type, (Type_name :> Type_name(n)) in input type
+      * instead of just Type_name(n).
+      *
+      * In dependent function types we should use arrow ~>>: instead of ->>:
+      */
+    object Example {
+      /**
+        * -- For example this is vector type (type of elements A is fixed)
+        * val VecA = "Vec(A)" :: Nat ->: Type
+        * val n = "n" :: Nat
+        * val VecAInd = ("nil" ::: (VecA -> VecA(zero) )) |:
+        * {"cons" ::: n ~>>: (A ->>: (VecA :> VecA(n) ) -->>: (VecA -> VecA(succ(n)) ))} =:: VecA
+        * val vnil :: vcons :: HNil = VecAInd.intros
+        *
+        * -- Type of natural numbers less than n
+        * val Fin = "Fin" :: Nat ->: Type
+        * val FinInd = {"FZ" ::: n ~>>: (Fin -> Fin(succ(n)) )} |:
+        * {"FS" ::: n ~>>: ((Fin :> Fin(n) ) -->>: (Fin -> Fin(succ(n)) ))} =:: Fin
+        * val fz :: fs :: HNil = FinInd.intros
+        *
+        * -- Vector type (type of elements A is arbitrary)
+        * val Vec = "Vec" :: Type ->: Nat ->: Type
+        * val VecInd = {"nil" ::: A ~>>: (Vec -> Vec(A)(zero) )} |:
+        * {"cons" ::: A ~>>: n ~>>: (A ->>: (Vec :> Vec(A)(n) ) -->>: (Vec -> Vec(A)(succ(n)) ))} =:: Vec
+        * val vnil :: vcons :: HNil = VecInd.intros
+        *
+        * -- Type of type-level lists and heterogeneous lists
+        * val TLst = "TList" :: Type
+        * val TLstInd = ("nil" ::: TLst) |: ("cons" ::: Type ->>: TLst -->>: TLst) =: TLst
+        * val tnil :: tcons :: HNil = TLstInd.intros
+        * val tlst = "tlist" :: TLst
+        *
+        * val HLst = "HList" :: TLst ->: Type
+        * val HLstInd = {"nil" ::: HLst -> HLst(tnil) } |:
+        * {"cons" ::: A ~>>: (A ->>: (tlst ~>>: ((HLst :> HLst(tlst) ) -->>: (HLst -> HLst(tcons(A)(tlst)) ))))} =:: HLst
+        * val hnil :: hcons :: HNil = HLstInd.intros
+        *
+        * -- Identity type
+        * val Id = "=" :: A ~>: (A ->: A ->: Type)
+        * val IdInd = ("refl" ::: A ~>>: a ~>>: (Id -> Id(A)(a)(a) )) =:: Id
+        * val refl :: HNil = IdInd.intros
+        *
+        * -- Heterogeneous identity type
+        * val HId = "HId" :: A ~>: B ~>: (A ->: B ->: Type)
+        * val HIdInd = ("refl" ::: A ~>>: a ~>>: (HId -> HId(A)(A)(a)(a) )) =:: HId
+        * val hrefl :: HNil = HIdInd.intros
+        *
+        * -- Type "less than or equal"
+        * val LTE = "≤" :: Nat ->: Nat ->: Type
+        * val LTEInd = {"0 ≤ _" ::: m ~>>: (LTE -> LTE(zero)(m) )} |:
+        * {"S _ ≤ S _" ::: n ~>>: m ~>>: ((LTE :> LTE(n)(m) ) -->>: (LTE -> LTE(succ(n))(succ(m)) ))} =:: LTE
+        * val lteZero :: lteSucc :: HNil = LTEInd.intros
+        *
+        * -- Parity type
+        * val Parity = "Parity" :: Nat ->: Type
+        * val ParityInd = {"even" ::: n ~>>: (Parity -> Parity(double(n)) )} |:
+        * {"odd" ::: n ~>>: (Parity -> Parity(succ(double(n))) )} =:: Parity
+        * val even :: odd :: HNil = ParityInd.intros
+        *
+        */
+
+    }
+
+    // Translate the following algebraic data type from plain Scala into ProvingGround DSL (type of elements A is arbitrary)
+    object Exercise {
+      sealed trait List[A]
+      case class Nil[A]() extends List[A]
+      case class Cons[A](a: A, as: List[A]) extends List[A]
+
+
+      val List = "List" :: Type ->: Type
+
+      // provided in scope: start
+      val A = "A" :: Type
+      // provided in scope: end
+
+      // solution: start
+      val ListInd =
+        ("nil" ::: A ~>>: (List -> List(A) )) |:
+        ("cons" ::: A ~>>: (A ->>: (List :> List(A)) -->>: (List -> List(A)))) =:: List
+      // solution: end
+
+      val nil :: cons :: HNil = ListInd.intros
+    }
+  }
 }
