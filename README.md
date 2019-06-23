@@ -10,6 +10,7 @@ These are solutions to exercises from the [stepik.org](https://stepik.org) cours
 - [Type rules Wiki](https://en.wikipedia.org/wiki/Type_rule)
 - [Induction Recursion Wiki](https://en.wikipedia.org/wiki/Induction-recursion)
 - [ProvingGround HoTT Notes](http://siddhartha-gadgil.github.io/ProvingGround/notes/HoTT.html)
+- [Greek Letters Wiki](https://en.wikipedia.org/wiki/Greek_letters_used_in_mathematics,_science,_and_engineering) ;)
 
 ### Environment setup notes:
 
